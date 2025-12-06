@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ProjectFlow — Professional Project Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Auth Screen -->
+  <div id="authScreen">
+    <div class="auth-container">
+      <div class="auth-logo"><i class="fa-solid fa-rocket"></i><h1>ProjectFlow</h1></div>
+      
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+        <h2>Welcome Back</h2>
+        <div class="auth-input-group">
+          <label>Email</label>
+          <input id="loginEmail" type="email" required placeholder="your@email.com">
+        </div>
+        <div class="auth-input-group">
+          <label>Password</label>
+          <input id="loginPassword" type="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="auth-btn">Sign In</button>
+        <div class="auth-toggle">Don't have an account? <button type="button" onclick="switchAuthForm()">Sign up</button></div>
+      </form>
+      
+      <!-- Signup Form (email + password only) -->
+      <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+        <h2>Create Account</h2>
+        <div class="auth-input-group">
+          <label>Email</label>
+          <input id="signupEmail" type="email" required placeholder="your@email.com">
+        </div>
+        <div class="auth-input-group">
+          <label>Password</label>
+          <input id="signupPassword" type="password" required placeholder="••••••••">
+        </div>
+        <div class="auth-input-group">
+          <label>Confirm Password</label>
+          <input id="signupConfirm" type="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="auth-btn">Create Account</button>
+        <div class="auth-toggle">Already have an account? <button type="button" onclick="switchAuthForm()">Sign in</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- (rest of your HTML unchanged) -->
+  <!-- ... you can keep the rest of the body from your previous index.html ... -->
+
+  <script src="script.js"></script>
+</body>
+</html>

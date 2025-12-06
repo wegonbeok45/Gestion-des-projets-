@@ -1,9 +1,9 @@
+// public/script.js
 const STORAGE_KEY = 'projectflow_v1';
 const USERS_STORAGE = 'projectflow_users';
 
 let currentUser = null;
 let state = {};
-
 let selectedColor = '#667eea';
 
 function switchAuthForm(){
@@ -11,54 +11,66 @@ function switchAuthForm(){
   byId('signupForm').classList.toggle('active');
 }
 
-function handleLogin(e){
+function byId(id){ return document.getElementById(id); }
+
+// ---------- Auth integration with fake backend ----------
+// ---------- Auth integration with fake backend (email + password only) ----------
+async function handleLogin(e){
   e.preventDefault();
   const email = byId('loginEmail').value.trim();
   const password = byId('loginPassword').value;
-  const users = JSON.parse(localStorage.getItem(USERS_STORAGE) || '{}');
-  
-  if(users[email] && users[email].password === password){
-    currentUser = {email, name: users[email].name};
+  if(!email || !password) return alert('Email and password required');
+
+  try{
+    const resp = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await resp.json();
+    if(!resp.ok) return alert(data.error || 'Login failed');
+    localStorage.setItem('projectflow_token', data.token);
+    currentUser = { email: data.user.email, name: data.user.name };
     localStorage.setItem('projectflow_current', JSON.stringify(currentUser));
     loadUserData(false);
     byId('authScreen').classList.add('hidden');
     initializeApp();
-  } else {
-    alert('Invalid email or password');
-  }
+  }catch(err){ console.error(err); alert('Network error'); }
 }
 
-function handleSignup(e){
+async function handleSignup(e){
   e.preventDefault();
-  const name = byId('signupName').value.trim();
   const email = byId('signupEmail').value.trim();
   const password = byId('signupPassword').value;
   const confirm = byId('signupConfirm').value;
-  
-  if(password !== confirm){
-    alert('Passwords do not match');
-    return;
-  }
-  
-  const users = JSON.parse(localStorage.getItem(USERS_STORAGE) || '{}');
-  if(users[email]){
-    alert('Email already registered');
-    return;
-  }
-  
-  users[email] = {name, password};
-  localStorage.setItem(USERS_STORAGE, JSON.stringify(users));
-  currentUser = {email, name};
-  localStorage.setItem('projectflow_current', JSON.stringify(currentUser));
-  loadUserData(true);
-  byId('authScreen').classList.add('hidden');
-  initializeApp();
+  if(!email || !password) return alert('Email and password required');
+  if(password !== confirm) return alert('Passwords do not match');
+
+  try{
+    const resp = await fetch('/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await resp.json();
+    if(!resp.ok) return alert(data.error || 'Signup failed');
+    localStorage.setItem('projectflow_token', data.token);
+    currentUser = { email: data.user.email, name: data.user.name };
+    localStorage.setItem('projectflow_current', JSON.stringify(currentUser));
+    loadUserData(true);
+    byId('authScreen').classList.add('hidden');
+    initializeApp();
+  }catch(err){ console.error(err); alert('Network error'); }
 }
+
+
+
 
 function logout(){
   if(confirm('Are you sure you want to logout?')){
     currentUser = null;
     localStorage.removeItem('projectflow_current');
+    localStorage.removeItem('projectflow_token');
     byId('authScreen').classList.remove('hidden');
     document.querySelectorAll('.page').forEach(p=> p.style.display = 'none');
   }
@@ -130,8 +142,6 @@ function updateUserDisplay(){
     byId('userDisplayInitials').innerText = (currentUser.name||'').split(' ').map(x=>x[0]||'').join('').slice(0,2).toUpperCase();
   }
 }
-
-function byId(id){ return document.getElementById(id); }
 
 function switchTab(e){
   const tab = e?.target?.closest('.nav-item')?.dataset?.tab || e;
@@ -563,3 +573,17 @@ function initializeApp(){
 }
 
 window.addEventListener('load', checkAuth);
+
+// small helpers for UI actions
+function toggleTaskStatus(id, checked){
+  const i = state.tasks.findIndex(t=>t.id===id);
+  if(i>-1){
+    state.tasks[i].status = checked ? 'completed' : 'todo';
+    saveState();
+    renderAll();
+  }
+}
+
+// basic search/filter stubs (keeps original UI happy)
+function globalSearch(){ renderAll(); }
+function filterProjects(){ renderAll(); }

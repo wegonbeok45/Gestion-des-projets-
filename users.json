@@ -1,0 +1,12 @@
+{
+  "john@example.com": {
+    "name": "John Doe",
+    "passwordHash": "$2b$10$oVgzdqncKwVmgx/Rz0410OnOVlPNpLXckKsXBN3GY6nHsYYihMbTm",
+    "createdAt": "2025-12-06T18:09:38.485Z"
+  },
+  "jane@example.com": {
+    "name": "Jane Smith",
+    "passwordHash": "$2b$10$bamuV3R/4iwHWf88LVq/gOAJsMM3Y.tbV4wMMa6v9lBgKAUtUf6k6",
+    "createdAt": "2025-12-06T18:09:38.538Z"
+  }
+}
